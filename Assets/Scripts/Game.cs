@@ -11,19 +11,19 @@ public class Game : MonoBehaviour
     }
 
     [SerializeField] private GameObject _carAIPrefab;
+    [SerializeField] private Path _mainPath;
     
     private State _state;
     private ParkingSpace[] _parkingSpaces;
-    
-    // Start is called before the first frame update
+
+    public Path MainPath => _mainPath;
+
     void Start()
     {
         _parkingSpaces = FindObjectsOfType<ParkingSpace>();
-        
         StartState(State.Init);
     }
 
-    // Update is called once per frame
     void Update()
     {
         
@@ -58,7 +58,7 @@ public class Game : MonoBehaviour
             if (Random.Range(0f, 1f) < 0.9f)
             {
                 GameObject newCar = Instantiate(_carAIPrefab, space.Collider.transform.position, Quaternion.identity);
-                if (space.Downwards) newCar.transform.Rotate(0f, 0f,  180f);
+                newCar.transform.Rotate(0f, 0f,  space.Downwards ? -90f : 90f);
             }
         }
     }
