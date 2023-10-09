@@ -14,6 +14,7 @@ public class CarAI : MonoBehaviour
         OUT
     }
     
+    [SerializeField] private CarState _startState;
     [SerializeField] private Transform _previousNode;
     [SerializeField] private Transform _targetNode;
     [SerializeField] private Transform _front;
@@ -32,7 +33,7 @@ public class CarAI : MonoBehaviour
     {
         _path = FindObjectOfType<Game>().MainPath;
         _previousNode = transform;
-        _carState = CarState.PARKED;
+        _carState = _startState;
     }
     
     private void Update()
