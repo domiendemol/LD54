@@ -9,6 +9,7 @@ public class CarController : MonoBehaviour
     [SerializeField] private float _maxSteerSpeed;
     [SerializeField] private float _maxSpeed;
     [SerializeField] private float _brakeSpeed;
+    [SerializeField] private AnimationCurve _curve;
 
     private Rigidbody2D _rb;
     private Vector3 _angle;
@@ -40,10 +41,10 @@ public class CarController : MonoBehaviour
         if (Input.GetAxis("Vertical") > 0)
         {
             if (_curSteerSpeed < _maxSteerSpeed)
-                _curSteerSpeed += 0.02f;
+                _curSteerSpeed += 0.015f;
 
             //This will make changing direction better and easier
-            _speed += (_speed < 0) ? _speed += _acceleration / 15 : _acceleration / 30;
+            _speed += (_speed < 0) ? _acceleration / 15 : _acceleration / 30;
             
             _speed = Mathf.Clamp(_speed, -_maxSpeed, _maxSpeed);
             _rb.velocity = _carNormal * _speed;
@@ -54,17 +55,14 @@ public class CarController : MonoBehaviour
             if (_speed > 0) // braking
             {
                 _speed -= _brakeSpeed / 30;
-                if (_curSteerSpeed > 0) _curSteerSpeed -= 0.03f;
             }
             else if (_speed < 0) // backwards
             {
                 _speed -= _acceleration / 30;
-                if (_curSteerSpeed < _maxSteerSpeed) _curSteerSpeed += 0.035f;
             }
             else 
             {
                 _speed -= -_deceleration / 30;
-                if (_curSteerSpeed < _maxSteerSpeed) _curSteerSpeed += 0.01f;
             }
             
             _speed = Mathf.Clamp(_speed, -_maxSpeed, _maxSpeed);
@@ -72,16 +70,13 @@ public class CarController : MonoBehaviour
         }
         else if (Input.GetAxis("Vertical") == 0)
         {
-            if (_curSteerSpeed > 0) _curSteerSpeed -= 0.02f;
             _speed -= (_speed > 0) ? _deceleration / 10 : _speed += _deceleration / 10;
             
             if (Mathf.Abs(_speed) > 0.01) _speed = 0;
-            
             _rb.velocity = _carNormal * _speed;
         }
 
-        if (_speed < 0.1 && _speed > -0.1)
-            _curSteerSpeed = 0;
+        _curSteerSpeed = _curve.Evaluate(Mathf.Abs(_speed) / _maxSpeed) * _maxSteerSpeed;
     }
 
     private void HandleSteering()

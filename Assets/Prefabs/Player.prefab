@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 5417319272989228185}
   - component: {fileID: 5252149270668298524}
   - component: {fileID: 7257693570432612068}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Player
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -75,7 +75,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 2
+  m_SortingOrder: 4
   m_Sprite: {fileID: 21300000, guid: 2689487fc273c0284b75e0772d75d516, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -101,10 +101,70 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _speed: 0
   _acceleration: 1.5
-  _deceleration: 4
-  _maxSteerSpeed: 8
-  _maxSpeed: 6
-  _brakeSpeed: 3
+  _deceleration: 6
+  _maxSteerSpeed: 4
+  _maxSpeed: 5
+  _brakeSpeed: 6
+  _curve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 2
+      outSlope: 2
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 0.10270022
+      value: 0.044850864
+      inSlope: 0.496846
+      outSlope: 0.496846
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.48342586
+      outWeight: 1
+    - serializedVersion: 3
+      time: 0.25972107
+      value: 0.1170348
+      inSlope: 0.54289764
+      outSlope: 0.54289764
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.3664143
+      value: 0.28657088
+      inSlope: 2.1011415
+      outSlope: 2.1011415
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.18825261
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.6014811
+      value: 0.78870726
+      inSlope: 0.6020356
+      outSlope: 0.6020356
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.14820193
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.98986816
+      value: 0.66352844
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!50 &5252149270668298524
 Rigidbody2D:
   serializedVersion: 4

@@ -12,6 +12,8 @@ public class Game : MonoBehaviour
 
     [SerializeField] private GameObject _carAIPrefab;
     [SerializeField] private Path _mainPath;
+    [SerializeField] private Transform _spawn;
+    [SerializeField] private List<ParkingSpace> _freeSpaces;
     
     private State _state;
     private ParkingSpace[] _parkingSpaces;
@@ -52,15 +54,36 @@ public class Game : MonoBehaviour
 
     void StartPlayingState()
     {
-        // Spawn new AI cars
+        // Spawn new parked cars
         foreach (ParkingSpace space in _parkingSpaces)
         {
-            if (Random.Range(0f, 1f) < 0.9f)
+            if (!_freeSpaces.Contains(space))
             {
                 GameObject newCar = Instantiate(_carAIPrefab, space.Collider.transform.position, Quaternion.identity);
                 newCar.transform.Rotate(0f, 0f,  space.Downwards ? -90f : 90f);
+                newCar.GetComponent<CarAI>().ParkingSpace = space;
+                space.Free = false;
             }
         }
+
+        StartCoroutine(SpawnNewCars());
+    }
+    
+    private IEnumerator SpawnNewCars()
+    {
+        for (int i=0; i<5; i++)
+        {
+            yield return new WaitForSeconds(6);
+            FindObjectsOfType<CarAI>()[Random.Range(0, 30)].LeaveSpace();
+            SpawnNewCar();
+        }
+    }
+
+    public void SpawnNewCar()
+    {
+        GameObject newCirclingCar = Instantiate(_carAIPrefab, _spawn.position, Quaternion.identity);
+        newCirclingCar.name = "CarAI-" + Random.Range(100, 999);
+        newCirclingCar.GetComponent<CarAI>().State = CarAI.CarState.CIRCLING;
     }
     
     void UpdateState()

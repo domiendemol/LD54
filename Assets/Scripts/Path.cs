@@ -8,6 +8,7 @@ using UnityEngine.Analytics;
 public class Path : MonoBehaviour
 {
     [SerializeField] private List<Transform> _nodes;
+    [SerializeField] private Color _debugColor;
     public List<Transform> Nodes => _nodes;
 
     private void Awake()
@@ -17,16 +18,27 @@ public class Path : MonoBehaviour
             _nodes.Add(t);
     }
 
-    public Transform GetNext(Transform node)
+    public Transform GetNext(Transform node, bool loop, bool reverse)
     {
         int index = _nodes.IndexOf(node);
-        if (index == _nodes.Count - 1) return _nodes[0];
-        return _nodes[_nodes.IndexOf(node) + 1];
+        if (reverse) {
+            if (index == 0) return loop ? _nodes[^1] : null;
+        }
+        else {
+            if (index == _nodes.Count - 1) return loop ? _nodes[0] : null;
+        }
+        
+        return reverse ? _nodes[_nodes.IndexOf(node) - 1] : _nodes[_nodes.IndexOf(node) + 1];
     }
 
+    public void Reverse()
+    {
+        transform.localScale = new Vector3(1f, -1f, 1f); 
+    }
 
     private void OnDrawGizmos()
     {
+        Gizmos.color = _debugColor;
         Transform prev = null;
         foreach (Transform node in _nodes)
         {
