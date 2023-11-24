@@ -11,15 +11,17 @@ public class CarAI : MonoBehaviour
         PARKED,
         CIRCLING,
         IN,
-        OUT
+        OUT,
+        HOME
     }
     
     [SerializeField] private CarState _startState;
     [SerializeField] private Transform _previousNode;
     [SerializeField] private Transform _targetNode;
     [SerializeField] private Transform _front;
+    [SerializeField] private Transform _back;
     private Path _path;
-    private CarState _carState;
+    [SerializeField] private CarState _carState;
     private ParkingSpace _parkingSpace;
     private bool _goingHome;
 
@@ -40,26 +42,55 @@ public class CarAI : MonoBehaviour
     {
         if (_carState == CarState.CIRCLING)
         {
-            bool stop = false;
-            RaycastHit2D hit = Physics2D.Raycast(_front.position, _front.right, 2f, LayerMask.GetMask("Car"));
-            if (hit && hit.collider != null)
-            {
-                if (hit.collider.GetComponent<CarController>() != null) stop = true; 
-                // if (hit.collider.GetComponent<CarController>() != null) Debug.Log($"Distance: {hit.distance}");
-                CarAI car = hit.transform.GetComponent<CarAI>();
-                if (car != null && car != this && car.State != CarState.PARKED) stop = true;
-            }
-            
-            if (!stop) FollowPath(true);
+            if (!ShouldStop(false)) FollowPath(true);
         }
         else if (_carState == CarState.IN)
         {
+            //if (!ShouldStop(false))
             FollowPath(false);
         }
         else if (_carState == CarState.OUT)
         {
-            FollowPath(false, true);
+            if (!ShouldStop(true)) FollowPath(false, true);
         }
+        else if (_carState == CarState.HOME)
+        {
+            if (!ShouldStop(false)) transform.position += transform.GetChild(0).right * 2 * Time.deltaTime;
+        }
+    }
+
+    private bool ShouldStop(bool reverse)
+    {
+        if (reverse)
+        {
+            RaycastHit2D hitBack = Physics2D.Raycast(_back.position, _back.right, 0.5f, LayerMask.GetMask("Car"));
+            return ShouldStop(hitBack);
+        }
+        else
+        {
+            RaycastHit2D hitFront = Physics2D.Raycast(_front.position, _front.right, 2f, LayerMask.GetMask("Car"));
+            // TODO these only for other CarState OUT AIs not our car
+            RaycastHit2D hitFront2 = Physics2D.Raycast(_front.position, Quaternion.Euler(0,0,30) *_front.right, 3.5f, LayerMask.GetMask("Car"));
+            RaycastHit2D hitFront3 = Physics2D.Raycast(_front.position, Quaternion.Euler(0,0,-30) *_front.right, 3.5f, LayerMask.GetMask("Car"));
+            RaycastHit2D hitFront4 = Physics2D.Raycast(_front.position, Quaternion.Euler(0,0,-45) *_front.right, 3.5f, LayerMask.GetMask("Car"));
+            RaycastHit2D hitFront5 = Physics2D.Raycast(_front.position, Quaternion.Euler(0,0,45) *_front.right, 3.5f, LayerMask.GetMask("Car"));
+            return ShouldStop(hitFront) || ShouldStop(hitFront2) || ShouldStop(hitFront3);
+        }
+    }
+    
+
+    private bool ShouldStop(RaycastHit2D hit)
+    {
+        bool stop = false;
+        if (hit && hit.collider != null)
+        {
+            if (hit.collider.GetComponent<CarController>() != null) stop = true;
+            // if (hit.collider.GetComponent<CarController>() != null) Debug.Log($"Distance: {hit.distance}");
+            CarAI car = hit.transform.GetComponent<CarAI>();
+            if (car != null && car != this && car.State != CarState.PARKED) stop = true;
+        }
+
+        return stop;
     }
 
     public void LeaveSpace()
@@ -84,6 +115,10 @@ public class CarAI : MonoBehaviour
             _parkingSpace = other.gameObject.GetComponentInParent<ParkingSpace>();
             _parkingSpace.Free = false;
         }
+        else if (_carState == CarState.CIRCLING && _goingHome && other.gameObject.Equals(Game.Instance.OutPoint))
+        {
+            _carState = CarState.HOME;
+        }
     }
 
     private void FollowPath(bool loop, bool reverse = false)
@@ -104,6 +139,7 @@ public class CarAI : MonoBehaviour
         {
             _previousNode = _targetNode;
             _targetNode = _path.GetNext(_previousNode, loop, reverse);
+//            Debug.Log($"Next node: {_targetNode.name} for {gameObject.name}");
             if (_targetNode == null)
             {
                 if (_carState == CarState.IN) _carState = CarState.PARKED;
@@ -147,9 +183,17 @@ public class CarAI : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        Gizmos.color = Color.red;
-        if (_targetNode != null) Gizmos.DrawLine(transform.position, _targetNode.position);
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawLine(_front.position, _front.position + _front.right*2);
+        if (_carState == CarState.CIRCLING)
+        {
+            Gizmos.color = Color.red;
+            if (_targetNode != null) Gizmos.DrawLine(transform.position, _targetNode.position);
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawLine(_front.position, _front.position + _front.right*2);
+            Gizmos.DrawLine(_front.position, _front.position + Quaternion.Euler(0,0,30) * _front.right*3.5f);
+            Gizmos.DrawLine(_front.position, _front.position + Quaternion.Euler(0,0,45) * _front.right*3.5f);
+            Gizmos.DrawLine(_front.position, _front.position + Quaternion.Euler(0,0,-30) * _front.right*3.5f);           
+            Gizmos.DrawLine(_front.position, _front.position + Quaternion.Euler(0,0,-45) * _front.right*3.5f);           
+            Gizmos.DrawLine(_front.position, _front.position + Quaternion.Euler(0,0,-45) * _front.right*3.5f);           
+        }
     }
 }

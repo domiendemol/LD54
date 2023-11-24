@@ -29,6 +29,13 @@ public class ParkingSpace : MonoBehaviour
         _collider = GetComponentInChildren<BoxCollider2D>();
         _inPath.transform.localScale = _pathScale;
         _outPath.transform.localScale = _pathScale;
+        if (_pathScale.x < 0)
+        {
+            foreach (Transform node in _inPath.Nodes)
+            {
+                node.Rotate(0,0,180f);
+            }
+        }
         //_outPath.transform.localScale = new Vector3(-_pathScale.x, _pathScale.y, _pathScale.z);
         _free = true;
     }

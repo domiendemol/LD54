@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -10,18 +11,26 @@ public class CarController : MonoBehaviour
     [SerializeField] private float _maxSpeed;
     [SerializeField] private float _brakeSpeed;
     [SerializeField] private AnimationCurve _curve;
+    [SerializeField] private AudioSource _hitAudioSource;
 
     private Rigidbody2D _rb;
     private Vector3 _angle;
     private float _curSteerSpeed;
     private Quaternion _rotation;
     private Vector2 _carNormal;
-
+    private bool _parked;
+    private Vector3 _startPos;
+    private Quaternion _startRotation;
     
+    public bool Parked => _parked;
+
+
     void Start()
     {
         _rb = GetComponent<Rigidbody2D>();
         _angle.z = transform.rotation.eulerAngles.z;
+        _startPos = transform.position;
+        _startRotation = transform.rotation;
     }
 
     void FixedUpdate()
@@ -103,5 +112,30 @@ public class CarController : MonoBehaviour
                 transform.rotation = _rotation;
             }
         }
+    }
+
+    private void OnCollisionEnter2D(Collision2D c)
+    {
+        _hitAudioSource.Play();
+    }
+
+    private void OnTriggerStay2D(Collider2D other)
+    {
+        // check rotation!
+        float angle = Math.Abs(Mathf.Repeat(transform.eulerAngles.z + 180, 360) - 180);
+        if (other.transform.name.Contains("spot") && (180 - angle < 5 || angle < 5) && _speed < 0.05f)
+        {
+            _parked = true;
+        }
+    }
+
+    public void Reset()
+    {
+        _parked = false;
+
+        transform.position = _startPos;
+        transform.rotation = _startRotation;
+        _angle = Vector3.zero;
+        _angle.z = transform.rotation.eulerAngles.z;
     }
 } 

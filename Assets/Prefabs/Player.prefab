@@ -100,11 +100,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _speed: 0
-  _acceleration: 1.5
+  _acceleration: 1.7
   _deceleration: 6
   _maxSteerSpeed: 4
-  _maxSpeed: 5
-  _brakeSpeed: 6
+  _maxSpeed: 4.5
+  _brakeSpeed: 7
   _curve:
     serializedVersion: 2
     m_Curve:
@@ -118,14 +118,23 @@ MonoBehaviour:
       inWeight: 0
       outWeight: 0
     - serializedVersion: 3
-      time: 0.10270022
-      value: 0.044850864
-      inSlope: 0.496846
-      outSlope: 0.496846
+      time: 0.040256467
+      value: 0.019129664
+      inSlope: 0.4751948
+      outSlope: 0.70489025
+      tangentMode: 5
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.88457125
+    - serializedVersion: 3
+      time: 0.106917806
+      value: 0.04119456
+      inSlope: 0.8427246
+      outSlope: 0.8427246
       tangentMode: 0
       weightedMode: 0
       inWeight: 0.48342586
-      outWeight: 1
+      outWeight: 0.33315322
     - serializedVersion: 3
       time: 0.25972107
       value: 0.1170348
@@ -136,8 +145,8 @@ MonoBehaviour:
       inWeight: 0.33333334
       outWeight: 0.33333334
     - serializedVersion: 3
-      time: 0.3664143
-      value: 0.28657088
+      time: 0.41813472
+      value: 0.32167134
       inSlope: 2.1011415
       outSlope: 2.1011415
       tangentMode: 0
@@ -145,8 +154,8 @@ MonoBehaviour:
       inWeight: 0.18825261
       outWeight: 0.33333334
     - serializedVersion: 3
-      time: 0.6014811
-      value: 0.78870726
+      time: 0.60968846
+      value: 0.6372105
       inSlope: 0.6020356
       outSlope: 0.6020356
       tangentMode: 0
@@ -154,8 +163,8 @@ MonoBehaviour:
       inWeight: 0.14820193
       outWeight: 0.33333334
     - serializedVersion: 3
-      time: 0.98986816
-      value: 0.66352844
+      time: 0.98339844
+      value: 0.5207825
       inSlope: 0
       outSlope: 0
       tangentMode: 0
@@ -165,6 +174,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  _hitAudioSource: {fileID: 0}
 --- !u!50 &5252149270668298524
 Rigidbody2D:
   serializedVersion: 4
